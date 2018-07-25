@@ -5,31 +5,29 @@ import random
 
 class KMeans(object):
     ''' Kmeans object class '''
-    def __init__(self):
+    def __init__(self, filepath):
         ''' instantiates the members of the class '''
         self.clus1 = []
         self.clus2 = []
         self.clus3 = []
+        self.centroid1 = [0,0,0,0,"unknown"]
+        self.centroid2 = [0,0,0,0,"unknown"]
+        self.centroid3 = [0,0,0,0,"unknown"]
 
     if __name__ == "__main__":
-        file = open('data/iris.data')
+        file = open(self.filepath)
         lines = file.readlines()
         file.close()
 
         random.shuffle(lines)
 
-        file = open('data/mixediris.data')
+        file = open('data/mixeddata.data')
         file.writelines(lines)
         file.close()
 
-        csvfile1 = open('data/mixediris.data')
+        csvfile1 = open('data/mixeddata.data')
         csvreader = csv.reader(csvfile1, delimiter=',')
-        centroid1 = [0,0,0,0,"unknown"]
-        centroid2 = [0,0,0,0,"unknown"]
-        centroid3 = [0,0,0,0,"unknown"]
-        sum1 = 0
-        sum2 = 0
-        sum3 = 0
+
         count = 0
         for row in csvreader:
             if count==0:
@@ -54,19 +52,60 @@ class KMeans(object):
                 centroid3[3] = row[3]
                 centroid3[4] = row[4]
             else:
-                dist1 = (centroid1[0]-row[0])**2 + (centroid1[1]-row[1])**2 + (centroid1[2]-row[2])**2 + (centroid1[3]-row[3])**2
-                dist2 = (centroid2[0]-row[0])**2 + (centroid2[1]-row[1])**2 + (centroid2[2]-row[2])**2 + (centroid2[3]-row[3])**2
-                dist3 = (centroid3[0]-row[0])**2 + (centroid3[1]-row[1])**2 + (centroid3[2]-row[2])**2 + (centroid3[3]-row[3])**2
-                distances = [dist1, dist2, dist3]
-                minimum = min(distances)
-                if minimum == dist1:
-                    self.clus1.append(row)
-                elif minimum == dist2:
-                    self.clus2.append(row)
-                else:
-                    self.clus3.append(row)
+                break
+            count += 1
 
-        centroids = update_centroids()
+            iterate = True
+
+            while iterate:
+
+                csvreader = get_data()
+
+                calculate_clusters(csvreader)
+
+                old_centroid1 = self.centroid1.copy()
+                old_centroid2 = self.centroid2.copy()
+                old_centroid3 = self.centroid3.copy()
+
+                centroids = update_centroids()
+
+                if (old_centroid1 == centroids[0]) && (old_centroid2 == centroids[1]) && (old_centroid3 == centroids[2]):
+                    iterate = False
+                else:
+                    self.centroid1 = centroids[0].copy()
+                    self.centroid2 = centroids[1].copy()
+                    self.centroid3 = centroids[2].copy()
+
+
+    def get_data(self):
+        file = open(self.filepath)
+        lines = file.readlines()
+        file.close()
+
+        random.shuffle(lines)
+
+        file = open('data/mixeddata.data')
+        file.writelines(lines)
+        file.close()
+
+        csvfile1 = open('data/mixeddata.data')
+        csvreader = csv.reader(csvfile1, delimiter=',')
+
+        return csvreader
+
+    def calculate_clusters(self, data):
+        for value in data:
+            dist1 = (centroid1[0]-value[0])**2 + (centroid1[1]-value[1])**2 + (centroid1[2]-value[2])**2 + (centroid1[3]-value[3])**2
+            dist2 = (centroid2[0]-value[0])**2 + (centroid2[1]-value[1])**2 + (centroid2[2]-value[2])**2 + (centroid2[3]-value[3])**2
+            dist3 = (centroid3[0]-value[0])**2 + (centroid3[1]-value[1])**2 + (centroid3[2]-value[2])**2 + (centroid3[3]-value[3])**2
+            distances = [dist1, dist2, dist3]
+            minimum = min(distances)
+            if minimum == dist1:
+                self.clus1.append(value)
+            elif minimum == dist2:
+                self.clus2.append(value)
+            else:
+                self.clus3.append(value)
 
     def update_centroids(self):
         ''' method used to update the centroid values '''
