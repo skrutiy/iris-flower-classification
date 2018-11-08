@@ -1,8 +1,8 @@
 ''' This is the class for a knn object '''
 
 import csv
-import numpy as np
 from collections import Counter
+import numpy as np
 
 class KNN(object):
     ''' KNN object class '''
@@ -50,20 +50,19 @@ class KNN(object):
         return predictions
 
 
-    def accuracy(self, predictions, test_data_path):
-        ''' method to get the accuracy of the model, returns a float '''
-        file_test = open(test_data_path)
-        csvreader_testing = csv.reader(file_test, delimiter=',')
-        labels_test = []
-        for row in csvreader_testing:
-            if len(row) != 0:
-                labels_test.append(row[4])
+def accuracy(predictions, test_data_path):
+    ''' method to get the accuracy of the model, returns a float '''
+    file_test = open(test_data_path)
+    csvreader_testing = csv.reader(file_test, delimiter=',')
+    labels_test = []
+    for row in csvreader_testing:
+        if len(row) != 0:
+            labels_test.append(row[4])
 
-        correct = 0
-        for i in range(len(predictions)):
-            if predictions[i] == labels_test[i]:
-                correct += 1
+    correct = 0
+    for i, value in enumerate(predictions):
+        if value == labels_test[i]:
+            correct += 1
 
-        accuracy = correct/len(predictions)
-        return accuracy
-
+    accur = correct/len(predictions)
+    return accur
